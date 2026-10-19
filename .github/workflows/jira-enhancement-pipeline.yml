@@ -49,6 +49,7 @@ jobs:
           title: ${{ steps.jira_demo.outputs.pr_title }}
           body: ${{ steps.jira_demo.outputs.pr_body }}
           branch: ${{ steps.jira_demo.outputs.branch_name }}
+          base: main
           delete-branch: true
           labels: |
             automated

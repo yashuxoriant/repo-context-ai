@@ -85,4 +85,17 @@ describe("jira-enhancement-pipeline.yml", () => {
     const prStep = steps.find((s) => s.uses?.includes("create-pull-request"));
     expect(prStep.if).toMatch(/changed == 'true'/);
   });
+
+  it("sets an explicit base branch distinct from the dynamic feature branch", async () => {
+    const workflow = await loadYaml(".github/workflows/jira-enhancement-pipeline.yml");
+    const steps = workflow.jobs["jira-demo"].steps;
+    const prStep = steps.find((s) => s.uses?.includes("create-pull-request"));
+
+    // The CLI already checks out a new local branch before this step runs,
+    // so an explicit base is required - without it, create-pull-request
+    // defaults base to whatever is currently checked out (the new branch
+    // itself), which GitHub rejects as "base and branch must differ".
+    expect(prStep.with.base).toBeTruthy();
+    expect(prStep.with.base).not.toBe(prStep.with.branch);
+  });
 });
