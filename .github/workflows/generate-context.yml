@@ -1,0 +1,94 @@
+name: Generate & Refresh Repository Context
+
+# Purpose: generate/refresh the standardized context file (CONTEXT.md,
+# mirrored to .github/copilot-instructions.md) for the TARGET repository
+# this workflow is installed into, and open a pull request for human
+# review. This workflow NEVER merges anything automatically (spec:
+# context-refresh-pipeline "Mandatory human review before adoption").
+#
+# Triggers:
+#   1. workflow_dispatch - first-time / manual generation
+#   2. schedule (weekly) - catches drift even without a tracked-path change
+#   3. push to main touching a configured "significant path" - see
+#      config/refresh-triggers.json, which is this repository's single
+#      source of truth for both this trigger list and its own tests
+#      (spec: "Change-triggered and scheduled regeneration")
+
+on:
+  workflow_dispatch: {}
+
+  schedule:
+    - cron: "0 3 * * 1" # every Monday 03:00 UTC - keep in sync with config/refresh-triggers.json
+
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "pom.xml"
+      - "requirements.txt"
+      - "*.csproj"
+      - "go.mod"
+      - ".github/workflows/**"
+      - "**/README.md"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history needed for hot-files analysis
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Checkout repo-context-ai tooling
+        uses: actions/checkout@v4
+        with:
+          repository: <org>/repo-context-ai
+          path: .repo-context-ai-tooling
+          ref: main
+
+      - name: Install tooling dependencies
+        working-directory: .repo-context-ai-tooling
+        run: npm ci
+
+      - name: Run context generation
+        id: generate
+        env:
+          # If MODEL_ENDPOINT/MODEL_API_KEY secrets are not configured,
+          # src/index.js automatically falls back to DEMO MODE (a scripted
+          # response) so this workflow can still be demoed end-to-end.
+          MODEL_ENDPOINT: ${{ secrets.MODEL_ENDPOINT }}
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+          TARGET_REPO_PATH: ${{ github.workspace }}
+        run: node .repo-context-ai-tooling/src/index.js generate
+
+      - name: Open pull request for review
+        if: steps.generate.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "docs: refresh repository context file"
+          title: "docs: Update repository context (CONTEXT.md)"
+          body: |
+            Automated refresh of the repository context file.
+
+            **This PR must be reviewed by an engineer before merging.**
+            The generated content is a DRAFT based on current repository
+            structure, manifests, and recent change history - please verify
+            accuracy, especially Architecture, Conventions, and Gotchas.
+
+            Triggered by: ${{ github.event_name }}
+            Commit: ${{ github.sha }}
+          branch: automated/context-refresh
+          delete-branch: true
+          labels: |
+            documentation
+            automated

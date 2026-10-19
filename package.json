@@ -1,0 +1,36 @@
+{
+  "name": "repo-context-ai",
+  "version": "0.1.0",
+  "description": "Automated repository context (Skill/context file) generation for AI coding assistants.",
+  "type": "module",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate": "node src/index.js generate",
+    "approve": "node src/index.js approve",
+    "demo": "node scripts/demo-local-dry-run.mjs",
+    "dashboard": "node scripts/build-dashboard.mjs"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "keywords": [
+    "ai",
+    "copilot",
+    "repository-context",
+    "openspec"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0",
+    "js-yaml": "^5.5.0",
+    "prettier": "^3.9.10",
+    "vitest": "^2.1.9"
+  }
+}

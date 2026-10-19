@@ -1,0 +1,16 @@
+{
+  "description": "Paths that, when changed on the default branch, are considered a 'significant change' and trigger context regeneration (spec: context-refresh-pipeline 'Change-triggered and scheduled regeneration'). Kept as a single source of truth referenced by both the GitHub Actions workflow and its tests.",
+  "significantPaths": [
+    "package.json",
+    "pom.xml",
+    "requirements.txt",
+    "*.csproj",
+    "go.mod",
+    ".github/workflows/**",
+    "**/README.md"
+  ],
+  "schedule": {
+    "cron": "0 3 * * 1",
+    "description": "Every Monday 03:00 UTC - catches drift even without a significant-path commit"
+  }
+}
