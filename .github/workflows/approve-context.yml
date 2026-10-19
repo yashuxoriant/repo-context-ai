@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repo-context-ai tooling
         uses: actions/checkout@v4
         with:
-          repository: <org>/repo-context-ai
+          repository: yashuxoriant/repo-context-ai
           path: .repo-context-ai-tooling
           ref: main
 

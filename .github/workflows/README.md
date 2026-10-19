@@ -41,9 +41,11 @@ in that repository's git history - nothing else needs to be undone.
 ## Required repository configuration
 
 - Secrets: `MODEL_ENDPOINT`, `MODEL_API_KEY` (shared, centrally managed
-  credential - see design.md "Context")
+  credential - see design.md "Context"). If unset, `src/index.js` falls back
+  to a safe DEMO MODE instead of failing (see `scripts/demo-local-dry-run.mjs`
+  and the "Known Constraints / Gotchas" section this produces).
 - Permissions: `contents: write`, `pull-requests: write` (already set in both
   workflow files)
-- This tooling repository (`repo-context-ai`) checked out as a step dependency
-  - replace `<org>/repo-context-ai` in both workflow files with the actual
-    repository path once published
+- This tooling repository is checked out as a step dependency from
+  `yashuxoriant/repo-context-ai` (`ref: main`) - update that `repository:`
+  value in both workflow files if this tooling repo is ever forked/renamed.
