@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { implementChange } from "../../src/implementation/index.js";
+import { implementChange, implementChangeFiles } from "../../src/implementation/index.js";
 import { createMockProvider } from "../../src/generator/model.js";
 
 const execFileAsync = promisify(execFile);
@@ -77,6 +77,33 @@ describe("implementChange", () => {
 
       expect(result.safetyGate.passed).toBe(false);
       expect(result.readyForReview).toBe(false);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("implementChangeFiles", () => {
+  it("writes planned files and runs the safety gate without creating or switching a git branch", async () => {
+    const dir = await makeRepo();
+    try {
+      const before = await execFileAsync("git", ["-C", dir, "branch", "--show-current"]);
+      const plan = { approach: "Add a healthz command", files: ["src/healthz.js", "src/healthz.test.js"] };
+
+      const result = await implementChangeFiles({
+        plan,
+        repoRoot: dir,
+        callModel: createMockProvider("stub")
+      });
+
+      const after = await execFileAsync("git", ["-C", dir, "branch", "--show-current"]);
+
+      expect(result.branchName).toBeUndefined();
+      expect(after.stdout).toBe(before.stdout);
+      expect(result.writtenPaths.sort()).toEqual(["src/healthz.js", "src/healthz.test.js"].sort());
+      expect(result.aiAuthoredTestFiles).toEqual(["src/healthz.test.js"]);
+      expect(result.safetyGate.passed).toBe(true);
+      expect(result.readyForReview).toBe(true);
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

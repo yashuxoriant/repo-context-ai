@@ -11,7 +11,7 @@ import { readRepositoryContextStatus } from "./pipeline/rollout-status.js";
 import { stampLastValidated } from "./generator/stamp.js";
 import { runIntake } from "./jira/intake.js";
 import { planChange } from "./planning/index.js";
-import { implementChange } from "./implementation/index.js";
+import { implementChangeFiles } from "./implementation/index.js";
 import { buildPrDescription } from "./review/pr-description.js";
 
 const execFileAsync = promisify(execFile);
@@ -217,11 +217,15 @@ async function runJiraDemoCommand() {
   );
 
   const branchName = `jira-demo/${demoTicket.id.toLowerCase()}-${Date.now()}`;
-  const implementationResult = await implementChange({
+  // Uses implementChangeFiles() (no git branch checkout) rather than
+  // implementChange(): the downstream create-pull-request GitHub Action
+  // expects to create the feature branch itself from uncommitted working-
+  // tree changes relative to `base` - a pre-existing local branch checkout
+  // confuses its branch-diffing logic ("base and branch must differ").
+  const implementationResult = await implementChangeFiles({
     plan: planResult.plan,
     repoRoot,
-    callModel: contentModel,
-    branchName
+    callModel: contentModel
   });
 
   if (!implementationResult.readyForReview) {
