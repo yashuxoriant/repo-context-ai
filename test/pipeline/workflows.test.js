@@ -58,3 +58,31 @@ describe("approve-context.yml", () => {
     expect(workflow.jobs["mark-approved"].if).toMatch(/merged == true/);
   });
 });
+
+describe("jira-enhancement-pipeline.yml", () => {
+  it("is syntactically valid YAML, manual-dispatch only for now", async () => {
+    const workflow = await loadYaml(".github/workflows/jira-enhancement-pipeline.yml");
+    const triggers = workflow.true ?? workflow.on;
+
+    expect(triggers).toHaveProperty("workflow_dispatch");
+    // No live Jira webhook/push/schedule trigger yet - intentional per design.md.
+    expect(triggers).not.toHaveProperty("push");
+  });
+
+  it("never merges a pull request directly - only opens one via create-pull-request", async () => {
+    const raw = await readFile(path.join(ROOT, ".github/workflows/jira-enhancement-pipeline.yml"), "utf8");
+    expect(raw).toMatch(/create-pull-request/);
+    expect(raw).not.toMatch(/git push.*main/);
+  });
+
+  it("runs the jira-demo CLI command and gates PR creation on its changed output", async () => {
+    const workflow = await loadYaml(".github/workflows/jira-enhancement-pipeline.yml");
+    const steps = workflow.jobs["jira-demo"].steps;
+
+    const runStep = steps.find((s) => s.run?.includes("jira-demo"));
+    expect(runStep).toBeTruthy();
+
+    const prStep = steps.find((s) => s.uses?.includes("create-pull-request"));
+    expect(prStep.if).toMatch(/changed == 'true'/);
+  });
+});

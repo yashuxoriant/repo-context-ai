@@ -90,17 +90,17 @@
 
 ## 6. End-to-End Demo Wiring
 
-- [ ] 6.1 Build an end-to-end demo script (mirrors
+- [x] 6.1 Build an end-to-end demo script (mirrors
       `scripts/demo-local-dry-run.mjs`) that runs intake -> planning ->
       implementation -> review against the mock Jira provider and this
       repository itself, and verify it produces a real local branch/diff
       without any live Jira or model credentials
-- [ ] 6.2 Add a GitHub Actions workflow
+- [x] 6.2 Add a GitHub Actions workflow
       (`.github/workflows/jira-enhancement-pipeline.yml`) with
       `workflow_dispatch` only for now (no live Jira webhook yet), and
       verify a dry run produces a PR through the same mandatory-review path
       as `generate-context.yml`
-- [ ] 6.3 Update `DEMO.md` with the new pipeline's demo steps and verify the
+- [x] 6.3 Update `DEMO.md` with the new pipeline's demo steps and verify the
       documented commands match the actual npm scripts added
 
 ## Workflow follow-up

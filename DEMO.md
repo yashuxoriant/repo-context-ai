@@ -19,8 +19,8 @@ npm run lint
 npm test
 ```
 
-Expect: lint produces no output (clean), tests show `Test Files 15 passed (15)`,
-`Tests 39 passed (39)`.
+Expect: lint produces no output (clean), tests show `Test Files 34 passed (34)`,
+`Tests 109 passed (109)`.
 
 **Tip:** do this setup *before* the meeting so `npm install` isn't eating into
 your demo time.
@@ -39,9 +39,10 @@ that auto-generates and keeps that context current."*
 ```bash
 npm test
 ```
-Point out: **39 tests passing**, covering secret redaction, draft-vs-approved
-status, and the "don't spam reviewers with no-op pull requests" rule - these
-map directly to written specs under `openspec/changes/.../specs/`.
+Point out: **109 tests passing**, covering secret redaction, draft-vs-approved
+status, the "don't spam reviewers with no-op pull requests" rule, and (newer)
+the Jira enhancement pipeline's scope enforcement and safety gates - all map
+directly to written specs under `openspec/changes/.../specs/`.
 
 ### Step 3 - "Here's it actually working, live" (90 sec) - the main moment
 ```bash
@@ -93,22 +94,61 @@ for the demo.
 
 ---
 
+## 2A. Phase 2 demo: the Jira enhancement pipeline
+
+Everything above is Phase 1 (context generation). This section demonstrates
+Phase 2: turning a Jira ticket into a reviewed pull request automatically,
+built directly on top of Phase 1's approved context files.
+
+### Step 8 - "Here's the bigger picture" (30 sec, no command)
+Open `openspec/changes/add-jira-enhancement-pipeline/proposal.md` and
+paraphrase: *"Once a repo has AI-maintained context, we can go further -
+read a ticket, draft the implementation and tests, and open a PR. Still
+always human-reviewed, never auto-deployed to production."*
+
+### Step 9 - "Here's it running end-to-end, live" (90 sec) - the main moment
+```bash
+npm run demo:jira
+```
+This runs three real ticket scenarios against a disposable temp copy of a
+sample repo, using a dummy Jira dataset (`test/fixtures/jira-tickets.sample.json`
+- no real Jira connection exists yet). Narrate each outcome as it prints:
+- **DEMO-101** (clear ticket): plans → implements → runs the safety gate →
+  opens a (mock, for this local run) pull request. *"Never merged
+  automatically - stops at review every time."*
+- **DEMO-102** (vague ticket, no acceptance criteria): *"Watch - it doesn't
+  guess. It halts and raises clarifying questions instead."*
+- **DEMO-103** (no repository linked): *"And if a ticket doesn't explicitly
+  say which repo, it refuses to guess that too."*
+
+### Step 10 - "Here's it opening a REAL GitHub pull request" (60 sec)
+In the GitHub Actions tab of this repo, run the **"Jira Enhancement Pipeline
+(Demo)"** workflow manually (`workflow_dispatch`). Narrate: *"Same code path
+as the local demo, but now it's writing a real file, running our real test
+suite as a safety gate, and opening a real PR on this actual repository."*
+Open the resulting pull request and point out the safety-gate results and
+the "must be reviewed by a human" line in the description.
+
+---
+
 ## 3. Anticipated questions and honest answers
 
 | Question | Answer |
 |---|---|
 | "Is the content in CONTEXT.md real AI output?" | No - this demo runs in a scripted/mock mode so it works without an API key. With real credentials (`MODEL_ENDPOINT`/`MODEL_API_KEY`), the exact same pipeline produces genuine LLM-written content. |
-| "Has this run against a real GitHub repo yet?" | Not yet - it's been built and fully tested locally. The GitHub Actions workflows are written and ready; they just need to be installed into a real repository. |
-| "What stops it from writing something wrong?" | Every generated/refreshed file is a pull request, never auto-merged. It's stamped DRAFT until a human approves it. |
+| "Has this run against a real GitHub repo yet?" | Yes - the context-generation pipeline has opened a real pull request on this repo via a live GitHub Actions run. The Jira enhancement pipeline's local demo is fully live; its GitHub Actions version is written and ready to run the same way. |
+| "What stops it from writing something wrong?" | Every generated/refreshed file is a pull request, never auto-merged. It's stamped DRAFT until a human approves it. The Jira pipeline adds a pre-PR safety gate (runs the repo's own tests/lint) and halts on ambiguous tickets instead of guessing. |
 | "Could it leak secrets from a repo it scans?" | No - the scanner redacts secret-pattern lines and excludes whole files like `.env`/`*.pem` before anything reaches the AI model. There are dedicated tests for this (`test/scanner/redact.test.js`). |
-| "How long did this take to build?" | See `openspec/changes/add-codebase-context-generation/tasks.md` for the full task breakdown - built using spec-driven development (OpenSpec), so every piece traces back to a written requirement. |
+| "Could the Jira pipeline touch the wrong files or repo?" | No - `change-planning` only scopes to the ticket's explicitly linked repository, and `change-implementation` structurally refuses to write any file outside the approved plan's list. Both are enforced in code and covered by tests. |
+| "How long did this take to build?" | See the `tasks.md` files under `openspec/changes/` for the full task breakdown - built using spec-driven development (OpenSpec), so every piece traces back to a written requirement. |
 
 ---
 
 ## 4. If something goes wrong during the live demo
 
-- **`npm test` fails unexpectedly:** re-run it - one access-check test spawns
-  `git` and can occasionally be slow on a loaded machine; it isn't flaky logic.
+- **`npm test` fails unexpectedly:** re-run it - some tests spawn `git`/`npm`
+  subprocesses and can occasionally be slow on a loaded machine; it isn't
+  flaky logic (tests run sequentially, not in parallel, to minimize this).
 - **`npm run demo` says `changed: false` on the very first run:** someone
   already ran it before - delete `CONTEXT.md` and
   `.github/copilot-instructions.md` and re-run.
@@ -121,7 +161,9 @@ for the demo.
 
 ## 5. Closing line
 
-*"This is one of three AI foundation use cases we scoped. It's the fastest
-and lowest-risk of the three, fully built and tested locally in under a day
-using AI-assisted development - next step is picking 2-3 real repos to pilot
-it on."*
+*"This is two of three AI foundation use cases we scoped - both fully built,
+tested, and demoed live against a real GitHub repo. The context-generation
+pipeline has already opened a real pull request automatically; the Jira
+enhancement pipeline runs the full intake-to-PR flow today in demo mode, with
+the architecture ready for a real Jira connection. Next step: pick 2-3 real
+repos and a real Jira project to pilot both on."*

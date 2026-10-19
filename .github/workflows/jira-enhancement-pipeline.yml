@@ -1,0 +1,55 @@
+name: Jira Enhancement Pipeline (Demo)
+
+# Purpose: demonstrates the Jira-to-PR enhancement pipeline end-to-end
+# against this repository, using a bundled demo ticket (no real Jira
+# connection exists yet - see openspec/changes/add-jira-enhancement-pipeline
+# /design.md "Open Questions"). Opens a REAL pull request via
+# create-pull-request, identical to generate-context.yml's pattern - never
+# merges anything automatically (spec: change-review-pipeline "Never
+# auto-merges").
+#
+# This is intentionally workflow_dispatch-only for now: there is no live
+# Jira webhook to trigger it automatically yet.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  jira-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jira enhancement pipeline (demo ticket)
+        id: jira_demo
+        env:
+          TARGET_REPO_PATH: ${{ github.workspace }}
+        run: node src/index.js jira-demo
+
+      - name: Open pull request for review
+        if: steps.jira_demo.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "docs: Jira enhancement pipeline demo run"
+          title: ${{ steps.jira_demo.outputs.pr_title }}
+          body: ${{ steps.jira_demo.outputs.pr_body }}
+          branch: ${{ steps.jira_demo.outputs.branch_name }}
+          delete-branch: true
+          labels: |
+            automated
+            demo

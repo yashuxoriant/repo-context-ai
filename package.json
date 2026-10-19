@@ -13,7 +13,9 @@
     "test:watch": "vitest",
     "generate": "node src/index.js generate",
     "approve": "node src/index.js approve",
+    "jira-demo": "node src/index.js jira-demo",
     "demo": "node scripts/demo-local-dry-run.mjs",
+    "demo:jira": "node scripts/demo-jira-pipeline.mjs",
     "dashboard": "node scripts/build-dashboard.mjs"
   },
   "engines": {
