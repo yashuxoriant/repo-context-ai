@@ -1,0 +1,51 @@
+{
+  "_comment": "Dummy Jira ticket dataset for demos/tests. No real Jira instance is connected yet (see design.md). Deliberately includes one clean ticket, one with missing acceptance criteria, and one with no repository link, to exercise ticket-intake's required behaviors.",
+  "tickets": [
+    {
+      "id": "DEMO-101",
+      "title": "Add a /healthz endpoint to repo-context-ai's CLI",
+      "description": "Operators need a simple way to confirm the CLI tooling is installed correctly before wiring it into a repository's CI pipeline.",
+      "acceptanceCriteria": [
+        "Running `node src/index.js healthz` prints a JSON object with a `status: \"ok\"` field and exits 0",
+        "The command requires no network access and no model credentials"
+      ],
+      "linkedDocs": [],
+      "repositoryLink": "yashuxoriant/repo-context-ai",
+      "automationEligible": true,
+      "status": "open"
+    },
+    {
+      "id": "DEMO-102",
+      "title": "Improve error messages somehow",
+      "description": "Some error messages could be clearer.",
+      "acceptanceCriteria": [],
+      "linkedDocs": [],
+      "repositoryLink": "yashuxoriant/repo-context-ai",
+      "automationEligible": true,
+      "status": "open"
+    },
+    {
+      "id": "DEMO-103",
+      "title": "Add retry logic to the model provider call",
+      "description": "The OpenAI-compatible provider should retry once on a transient 5xx before failing.",
+      "acceptanceCriteria": [
+        "A 5xx response triggers exactly one retry before the call is considered failed",
+        "A non-5xx failure (e.g. 401) does not retry"
+      ],
+      "linkedDocs": [],
+      "repositoryLink": null,
+      "automationEligible": true,
+      "status": "open"
+    },
+    {
+      "id": "DEMO-104",
+      "title": "Unrelated ticket not marked eligible",
+      "description": "This ticket intentionally lacks the automation-eligible marker and must never be picked up.",
+      "acceptanceCriteria": ["N/A"],
+      "linkedDocs": [],
+      "repositoryLink": "yashuxoriant/repo-context-ai",
+      "automationEligible": false,
+      "status": "open"
+    }
+  ]
+}
