@@ -54,18 +54,18 @@
 
 ## 4. Change Implementation (`change-implementation`)
 
-- [ ] 4.1 Implement branch creation and scoped file writing limited to the
+- [x] 4.1 Implement branch creation and scoped file writing limited to the
       plan's listed files, and verify a unit test confirms a write attempt
       outside the plan's file list is rejected (spec: "Implementation stays
       within the approved plan's scope")
-- [ ] 4.2 Implement test-case generation/update alongside the code change
+- [x] 4.2 Implement test-case generation/update alongside the code change
       and verify a unit test confirms at least one test file is produced
       for a plan describing a behavior change (spec: "Tests are written
       alongside the implementation")
-- [ ] 4.3 Implement the pre-PR safety gate (run the target repository's own
+- [x] 4.3 Implement the pre-PR safety gate (run the target repository's own
       test suite and lint) and verify a unit test confirms a failing gate
       blocks PR creation (spec: "Pre-PR safety gate")
-- [ ] 4.4 Implement AI-authored-test flagging for the eventual PR
+- [x] 4.4 Implement AI-authored-test flagging for the eventual PR
       description and verify a unit test confirms modified/added test files
       are correctly identified (spec: "AI-authored tests require explicit
       human review")
