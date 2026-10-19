@@ -72,18 +72,18 @@
 
 ## 5. Change Review Pipeline (`change-review-pipeline`)
 
-- [ ] 5.1 Implement PR creation linking the ticket identifier, change
+- [x] 5.1 Implement PR creation linking the ticket identifier, change
       summary, and safety-gate results, and verify a unit test confirms the
       PR body contains all three (spec: "Pull request links back to the
       originating ticket")
-- [ ] 5.2 Confirm (via test, not just code inspection) that no code path in
+- [x] 5.2 Confirm (via test, not just code inspection) that no code path in
       this capability calls a merge API, matching the existing
       `context-refresh-pipeline` guarantee (spec: "Never auto-merges")
-- [ ] 5.3 Implement the clarifying-questions path triggered by a halted
+- [x] 5.3 Implement the clarifying-questions path triggered by a halted
       plan and verify a unit test confirms a ticket with insufficient
       acceptance criteria produces a questions draft instead of silence
       (spec: "Clarifying-questions path for halted planning")
-- [ ] 5.4 Implement ticket status sync for PR-opened, PR-merged, and
+- [x] 5.4 Implement ticket status sync for PR-opened, PR-merged, and
       deployed-to-staging transitions against the mock provider, and verify
       a unit test confirms no status transition marks production-deployed
       automatically (spec: "Ticket status sync reflects pipeline stage")
