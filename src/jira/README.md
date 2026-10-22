@@ -1,7 +1,7 @@
 # `jira` module (ticket-intake capability + Jira client foundation)
 
 Provider-agnostic Jira client plus the `ticket-intake` capability. See
-`openspec/changes/add-jira-enhancement-pipeline/specs/ticket-intake/spec.md`
+`openspec/changes/enhancement-pipeline/specs/ticket-intake/spec.md`
 for the full behavior contract.
 
 **No real Jira instance is connected yet.** Everything here runs against a

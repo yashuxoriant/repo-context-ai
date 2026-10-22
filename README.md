@@ -110,4 +110,4 @@ connection): pilot validation, priority-tier rollout, real Jira integration.
 
 Run `openspec status --change <change-name>` for live progress against each
 change's task list (`add-codebase-context-generation`,
-`add-jira-enhancement-pipeline`).
+`enhancement-pipeline`).

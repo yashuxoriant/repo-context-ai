@@ -2,7 +2,7 @@ name: Jira Enhancement Pipeline (Demo)
 
 # Purpose: demonstrates the Jira-to-PR enhancement pipeline end-to-end
 # against this repository, using a bundled demo ticket (no real Jira
-# connection exists yet - see openspec/changes/add-jira-enhancement-pipeline
+# connection exists yet - see openspec/changes/enhancement-pipeline
 # /design.md "Open Questions"). Opens a REAL pull request via
 # create-pull-request, identical to generate-context.yml's pattern - never
 # merges anything automatically (spec: change-review-pipeline "Never

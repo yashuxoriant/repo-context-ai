@@ -4,7 +4,7 @@ Produces a grounded implementation plan for a ticket, using the target
 repository's APPROVED context file and current scanned state as its only
 inputs. Refuses to proceed on an unapproved repository or an ambiguous
 ticket rather than guessing. See
-`openspec/changes/add-jira-enhancement-pipeline/specs/change-planning/spec.md`
+`openspec/changes/enhancement-pipeline/specs/change-planning/spec.md`
 for the full behavior contract.
 
 ## Usage

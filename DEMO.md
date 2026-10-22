@@ -101,7 +101,7 @@ Phase 2: turning a Jira ticket into a reviewed pull request automatically,
 built directly on top of Phase 1's approved context files.
 
 ### Step 8 - "Here's the bigger picture" (30 sec, no command)
-Open `openspec/changes/add-jira-enhancement-pipeline/proposal.md` and
+Open `openspec/changes/enhancement-pipeline/proposal.md` and
 paraphrase: *"Once a repo has AI-maintained context, we can go further -
 read a ticket, draft the implementation and tests, and open a PR. Still
 always human-reviewed, never auto-deployed to production."*
